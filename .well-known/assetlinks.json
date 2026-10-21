@@ -1,0 +1,14 @@
+[
+  {
+    "relation": [
+      "delegate_permission/common.handle_all_urls"
+    ],
+    "target": {
+      "namespace": "android_app",
+      "package_name": "com.kindpulse.app",
+      "sha256_cert_fingerprints": [
+        "19:30:A2:8B:23:F1:E8:0D:94:CE:D8:96:F4:A6:97:0E:F5:18:C5:E9:27:D6:E5:2D:B2:2D:96:37:DE:6A:FA:78"
+      ]
+    }
+  }
+]
