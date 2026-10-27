@@ -211,6 +211,31 @@
     return 0.2126 * ch((n >> 16) & 255) + 0.7152 * ch((n >> 8) & 255) + 0.0722 * ch(n & 255);
   }
 
+  function contrast(a, b) {
+    var x = lum(a), y = lum(b);
+    return (Math.max(x, y) + 0.05) / (Math.min(x, y) + 0.05);
+  }
+
+  // [hex] moved [t] of the way to [toHex], each channel rounded (kpMix).
+  function mix(hex, toHex, t) {
+    var a = parseInt(hex.slice(1), 16), b = parseInt(toHex.slice(1), 16);
+    var out = '#';
+    [16, 8, 0].forEach(function (shift) {
+      var va = (a >> shift) & 255, vb = (b >> shift) & 255;
+      var v = Math.min(255, Math.max(0, Math.round(va + (vb - va) * t)));
+      out += ('0' + v.toString(16)).slice(-2);
+    });
+    return out.toUpperCase();
+  }
+
+  // The app's colour for anything ON the accent (lib/src/theme.dart,
+  // _kpPaletteFromRecipe): white, or the accent's own near-black, whichever
+  // contrasts more with it — never a luminance cut-off (FB-68).
+  function onAccent(accent) {
+    var deep = mix(accent, '#000000', 0.85);
+    return contrast('#FFFFFF', accent) >= contrast(deep, accent) ? '#FFFFFF' : deep;
+  }
+
   function render(t, payload) {
     document.title = t.name + ' · KindPulse theme';
     $('name').textContent = t.name;
@@ -222,7 +247,7 @@
     s.setProperty('--t-border', c.border);
     s.setProperty('--t-text', c.text);
     s.setProperty('--t-accent', c.accent);
-    s.setProperty('--t-on-accent', lum(c.accent) > 0.4 ? '#000000' : '#ffffff');
+    s.setProperty('--t-on-accent', onAccent(c.accent));
     s.setProperty('--t-heart', c.heart);
     s.setProperty('--t-flame', c.flame);
     s.setProperty('--t-danger', c.danger);
